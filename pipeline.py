@@ -6,7 +6,7 @@ from airflow.operators import bash_operator
 from airflow.operators import python_operator
 
 default_dag_args = {
-
+    'start_date': datetime.datetime(2022, 1, 1),
 }
 
 with models.DAG(
