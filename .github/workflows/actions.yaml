@@ -1,0 +1,32 @@
+name: Deploy to Cloud Composer
+
+on:
+  push:
+    branches:
+      - main
+env:
+  PROJECT_ID: dt-patrick-project-dev
+  SERVICE: forecast-data-loader
+  DAG_BUCKET: europe-west2-pipeline-compo-704d0d3f-bucket
+
+jobs:
+  deploy-to-composer:
+    name: 'Deploy to Cloud Composer '
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v0'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
+
+    - name: Copy code to the DAG folder
+      run: |-
+        gsutil cp pipeline.py gs://${{ env.DAG_BUCKET }}
