@@ -1,5 +1,4 @@
-import datetime
-
+import airflow
 from airflow import models
 from datetime import timedelta
 from airflow.operators import bash_operator
