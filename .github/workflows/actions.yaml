@@ -28,4 +28,4 @@ jobs:
 
     - name: Copy code to the DAG folder
       run: |-
-        gsutil cp pipeline.py gs://${{ env.DAG_BUCKET }}/dags
+        gsutil cp forecast_data_prep_pipeline.py gs://${{ env.DAG_BUCKET }}/dags
