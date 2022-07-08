@@ -1,12 +1,14 @@
 import datetime
 
 from airflow import models
-
+from datetime import timedelta
 from airflow.operators import bash_operator
 from airflow.operators import python_operator
 
 default_dag_args = {
-    'start_date': datetime.datetime(2022, 1, 1),
+    'start_date': airflow.utils.dates.days_ago(0),
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5)
 }
 
 with models.DAG(
