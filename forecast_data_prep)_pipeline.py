@@ -11,6 +11,8 @@ default_dag_args = {
 
 with models.DAG(
         'composer_sample_simple_greeting',
+        description='Hello World!',
+        schedule_interval=None,
         default_args=default_dag_args) as dag:
 
     def greeting():
