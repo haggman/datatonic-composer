@@ -6,7 +6,6 @@ on:
       - main
 env:
   PROJECT_ID: dt-patrick-project-dev
-  SERVICE: forecast-data-loader
   DAG_BUCKET: europe-west2-pipeline-compo-704d0d3f-bucket
 
 jobs:
@@ -29,4 +28,4 @@ jobs:
 
     - name: Copy code to the DAG folder
       run: |-
-        gsutil cp pipeline.py gs://${{ env.DAG_BUCKET }}
+        gsutil cp pipeline.py gs://${{ env.DAG_BUCKET }}/dags
