@@ -1,1 +1,1 @@
-apache-airflow[gcp]==2.2.5
+apache-airflow==2.2.5
