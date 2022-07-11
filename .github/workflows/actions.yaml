@@ -6,7 +6,7 @@ on:
       - main
 env:
   PROJECT_ID: dt-patrick-project-dev
-  DAG_BUCKET: europe-west2-pipeline-compo-704d0d3f-bucket
+  DAG_BUCKET: europe-west2-pipeline-compo-4a0cf065-bucket
 
 jobs:
   deploy-to-composer:
