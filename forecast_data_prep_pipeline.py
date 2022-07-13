@@ -32,7 +32,7 @@ with DAG(
         req.add_header("Authorization", f"Bearer {id_token}")
         response = urllib.request.urlopen(req)
         logging.info('response=', response)
-        logging.info(response.read())
+        logging.info('Message', response.read())
 
 
     hello_python = PythonOperator(
