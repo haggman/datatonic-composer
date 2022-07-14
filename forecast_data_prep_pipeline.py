@@ -1,4 +1,5 @@
 import logging
+import json
 from datetime import timedelta
 
 from airflow import DAG
@@ -31,8 +32,8 @@ with DAG(
         id_token = google.oauth2.id_token.fetch_id_token(auth_req, service_url)
         req.add_header("Authorization", f"Bearer {id_token}")
         response = urllib.request.urlopen(req)
-        logging.info('response=', response)
-        logging.info('Message', response.read())
+        resp_json = json.load(response)
+        print(resp_json)
 
 
     hello_python = PythonOperator(
