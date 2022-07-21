@@ -1,6 +1,7 @@
 import logging
 import json
-from datetime import timedelta, time
+import time
+from datetime import timedelta
 from google.cloud import bigquery_datatransfer
 from airflow import DAG
 from airflow.operators.bash import BashOperator
