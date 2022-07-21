@@ -1,6 +1,6 @@
 import logging
 import json
-from datetime import timedelta
+from datetime import timedelta, time
 from google.cloud import bigquery_datatransfer
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -42,7 +42,7 @@ with DAG(
     run_bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
         task_id="gcp_bigquery_start_transfer",
         transfer_config_id='62d94b42-0000-2a0f-b412-883d24f25d1c',
-        # requested_run_time={"seconds": int(time.time() + 60)},
+        requested_run_time={"seconds": int(time.time() + 10)},
     )
 
     cloud_run_load_files_to_gcs >> run_bq_projects_data_transfer
