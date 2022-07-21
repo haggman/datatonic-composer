@@ -42,7 +42,7 @@ with DAG(
         parent = transfer_client.common_project_path(project_id)
 
         configs = transfer_client.list_transfer_configs(parent=parent)
-        print("Got the following configs:")
+        print(f"Got the following configs: {configs}")
         for config in configs:
             print(f"\tID: {config.name}, Schedule: {config.schedule}, config: {config}")
 
