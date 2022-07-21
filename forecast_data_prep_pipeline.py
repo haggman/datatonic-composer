@@ -23,7 +23,6 @@ with DAG(
         description='Run Forecast data ingestion pipeline',
         schedule_interval=timedelta(hours=1),
         default_args=default_dag_args) as dag:
-
     def hit_cloud_run():
         service_url = 'https://forecast-data-loader-ldneeqwt7a-nw.a.run.app'
         req = urllib.request.Request(service_url)
@@ -35,31 +34,15 @@ with DAG(
         resp_json = json.load(response)
         print(resp_json)
 
-    def get_transfer_configs():
-        transfer_client = bigquery_datatransfer.DataTransferServiceClient()
-
-        project_id = "dt-patrick-project-dev"
-        parent = transfer_client.common_project_path(project_id)
-
-        configs = transfer_client.list_transfer_configs(parent=parent)
-        print(f"Got the following configs: {configs}")
-        for config in configs:
-            print(f"\tID: {config.name}, Schedule: {config.schedule}, config: {config}")
-
 
     cloud_run_load_files_to_gcs = PythonOperator(
         task_id='cloud_run_load_files_to_gcs',
         python_callable=hit_cloud_run)
 
-    check_configs = PythonOperator(
-        task_id='check_configs',
-        python_callable=get_transfer_configs)
+    run_bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
+        task_id="gcp_bigquery_start_transfer",
+        transfer_config_id='projects/868367057008/locations/europe-west2/transferConfigs/62d94b42-0000-2a0f-b412-883d24f25d1c',
+        # requested_run_time={"seconds": int(time.time() + 60)},
+    )
 
-    # run_bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
-    #     task_id="gcp_bigquery_start_transfer",
-    #     transfer_config_id=transfer_config_id,
-    #     requested_run_time={"seconds": int(time.time() + 60)},
-    # )
-
-    cloud_run_load_files_to_gcs >> check_configs
-
+    cloud_run_load_files_to_gcs >> run_bq_projects_data_transfer
