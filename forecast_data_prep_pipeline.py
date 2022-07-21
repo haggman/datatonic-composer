@@ -1,10 +1,11 @@
 import logging
 import json
 from datetime import timedelta
-
+from google.cloud import bigquery_datatransfer
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.operators.bigquery_dts import BigQueryDataTransferServiceStartTransferRunsOperator
 from airflow.utils import dates
 
 import urllib
@@ -34,26 +35,31 @@ with DAG(
         resp_json = json.load(response)
         print(resp_json)
 
+    def get_transfer_configs():
+        transfer_client = bigquery_datatransfer.DataTransferServiceClient()
+
+        project_id = "my-project"
+        parent = transfer_client.common_project_path(project_id)
+
+        configs = transfer_client.list_transfer_configs(parent=parent)
+        print("Got the following configs:")
+        for config in configs:
+            print(f"\tID: {config.name}, Schedule: {config.schedule}, config: {config}")
+
 
     cloud_run_load_files_to_gcs = PythonOperator(
         task_id='cloud_run_load_files_to_gcs',
         python_callable=hit_cloud_run)
 
-    run_bq_projects_data_transfer = BashOperator(
-        task_id='bye',
-        bash_command='echo Goodbye.')
+    check_configs = PythonOperator(
+        task_id='check_configs',
+        python_callable=get_transfer_configs)
 
-    cloud_run_load_files_to_gcs >> run_bq_projects_data_transfer
+    # run_bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
+    #     task_id="gcp_bigquery_start_transfer",
+    #     transfer_config_id=transfer_config_id,
+    #     requested_run_time={"seconds": int(time.time() + 60)},
+    # )
 
-    # def greeting():
-    #     logging.info('Hello World!')
-    #
-    # hello_python = PythonOperator(
-    #     task_id='hello',
-    #     python_callable=greeting)
-    #
-    # goodbye_bash = BashOperator(
-    #     task_id='bye',
-    #     bash_command='echo Goodbye.')
-    #
-    # hello_python >> goodbye_bash
+    cloud_run_load_files_to_gcs >> check_configs
+
