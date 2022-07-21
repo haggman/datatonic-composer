@@ -5,7 +5,6 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-from airflow.providers.http.operators.http import SimpleHttpOperator
 from airflow.utils import dates
 
 import urllib
@@ -36,15 +35,15 @@ with DAG(
         print(resp_json)
 
 
-    hello_python = PythonOperator(
-        task_id='hello',
+    cloud_run_load_files_to_gcs = PythonOperator(
+        task_id='cloud_run_load_files_to_gcs',
         python_callable=hit_cloud_run)
 
-    goodbye_bash = BashOperator(
+    run_bq_projects_data_transfer = BashOperator(
         task_id='bye',
         bash_command='echo Goodbye.')
 
-    hello_python 
+    cloud_run_load_files_to_gcs >> run_bq_projects_data_transfer
 
     # def greeting():
     #     logging.info('Hello World!')
