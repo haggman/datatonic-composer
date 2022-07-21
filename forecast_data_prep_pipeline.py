@@ -38,7 +38,7 @@ with DAG(
     def get_transfer_configs():
         transfer_client = bigquery_datatransfer.DataTransferServiceClient()
 
-        project_id = "my-project"
+        project_id = "dt-patrick-project-dev"
         parent = transfer_client.common_project_path(project_id)
 
         configs = transfer_client.list_transfer_configs(parent=parent)
