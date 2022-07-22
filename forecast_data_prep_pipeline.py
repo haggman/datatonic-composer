@@ -57,7 +57,7 @@ with DAG(
 
     dbt_run = BashOperator(
         task_id='dbt_run',
-        bash_command='cd /home/airflow/gcs/dags && dbt'
+        bash_command='cd /home/airflow/gcs/dags && dbt run'
     )
 
     cloud_run_load_files_to_gcs >> [bq_tasks_data_transfer, bq_projects_data_transfer] >> dbt_run
