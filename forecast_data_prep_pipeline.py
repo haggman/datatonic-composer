@@ -40,11 +40,18 @@ with DAG(
         task_id='cloud_run_load_files_to_gcs',
         python_callable=hit_cloud_run)
 
-    run_bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
-        task_id="gcp_bigquery_start_transfer",
+    bq_projects_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
+        task_id="bq_projects_data_transfer",
         transfer_config_id='62d94b42-0000-2a0f-b412-883d24f25d1c',
         requested_run_time={"seconds": int(time.time() + 10)},
         location="europe-west2"
     )
 
-    cloud_run_load_files_to_gcs >> run_bq_projects_data_transfer
+    bq_tasks_data_transfer = BigQueryDataTransferServiceStartTransferRunsOperator(
+        task_id="bq_tasks_data_transfer",
+        transfer_config_id='62d9852e-0000-2c35-8acd-3c286d418342',
+        requested_run_time={"seconds": int(time.time() + 10)},
+        location="europe-west2"
+    )
+
+    cloud_run_load_files_to_gcs >> [bq_tasks_data_transfer, bq_projects_data_transfer]
