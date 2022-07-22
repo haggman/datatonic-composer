@@ -1,6 +1,7 @@
 import logging
 import json
 import time
+import os
 from datetime import timedelta
 from google.cloud import bigquery_datatransfer
 from airflow import DAG
@@ -55,7 +56,7 @@ with DAG(
     )
 
     dbt_run = BashOperator(
-        task_id='dbt_run',
+        task_id='cd /home/airflow/gcs/dags && ls',
         bash_command='pwd'
     )
 
