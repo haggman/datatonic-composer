@@ -54,4 +54,9 @@ with DAG(
         location="europe-west2"
     )
 
-    cloud_run_load_files_to_gcs >> [bq_tasks_data_transfer, bq_projects_data_transfer]
+    dbt_run = BashOperator(
+        task_id='dbt_run',
+        bash_command='dbt run'
+    )
+
+    cloud_run_load_files_to_gcs >> [bq_tasks_data_transfer, bq_projects_data_transfer] >> dbt_run
