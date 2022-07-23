@@ -58,6 +58,7 @@ with DAG(
 
     dbt_run = KubernetesPodOperator(
         task_id="dbt_run",
+        service_account_name="sa-gke-dbt",
         namespace='dbt-pipelines',
         image='gcr.io/dt-patrick-project-dev/dbt-runner:latest',
         name="dbt-runner-pod",
