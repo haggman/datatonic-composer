@@ -6,6 +6,8 @@ from datetime import timedelta
 from google.cloud import bigquery_datatransfer
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.kubernetes.secret import Secret
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery_dts import BigQueryDataTransferServiceStartTransferRunsOperator
 from airflow.utils import dates
@@ -55,9 +57,12 @@ with DAG(
         location="europe-west2"
     )
 
-    dbt_run = BashOperator(
-        task_id='dbt_run',
-        bash_command='cd /home/airflow/gcs/dags && dbt run'
+    dbt_run = KubernetesPodOperator(
+        task_id="dbt_run",
+        namespace='default',
+        image='gcr.io/dt-patrick-project-dev/dbt-runner:latest',
+        name="dbt-runner-pod",
+        get_logs=True,
     )
 
     cloud_run_load_files_to_gcs >> [bq_tasks_data_transfer, bq_projects_data_transfer] >> dbt_run
