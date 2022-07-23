@@ -2,7 +2,7 @@ import logging
 import json
 import time
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from google.cloud import bigquery_datatransfer
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -10,16 +10,15 @@ from airflow.kubernetes.secret import Secret
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery_dts import BigQueryDataTransferServiceStartTransferRunsOperator
-from airflow.utils import dates
 
 import urllib
 import google.auth.transport.requests
 import google.oauth2.id_token
 
 default_dag_args = {
-    'start_date': dates.days_ago(0),
+    'start_date': datetime(2022, 7, 1),
     'retries': 3,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=1)
 }
 
 with DAG(
@@ -59,7 +58,7 @@ with DAG(
 
     dbt_run = KubernetesPodOperator(
         task_id="dbt_run",
-        namespace='default',
+        namespace='sa-gke-dbt',
         image='gcr.io/dt-patrick-project-dev/dbt-runner:latest',
         name="dbt-runner-pod",
         get_logs=True,
